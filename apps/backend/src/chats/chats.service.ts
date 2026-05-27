@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { ChatsRepository } from './chats.repository';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { JoinChatDto } from './dto/join-chat.dto';
@@ -15,13 +15,9 @@ export class ChatsService {
     return this.repository.findMyChats(userId);
   }
 
-  async getChat(chatId: string, userId: string) {
+  async getChat(chatId: string) {
     const chat = await this.repository.findById(chatId);
     if (!chat) throw new NotFoundException('Chat not found');
-
-    const member = await this.repository.isMember(chatId, userId);
-    if (!member) throw new ForbiddenException('Not a member of this chat');
-
     return chat;
   }
 

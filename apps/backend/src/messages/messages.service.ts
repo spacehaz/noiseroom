@@ -18,10 +18,7 @@ export class MessagesService {
     return this.repository.create(chatId, userId, dto.ciphertext);
   }
 
-  async getMessages(chatId: string, userId: string, query: GetMessagesDto) {
-    const member = await this.chatsRepository.isMember(chatId, userId);
-    if (!member) throw new ForbiddenException('Not a member of this chat');
-
+  async getMessages(chatId: string, query: GetMessagesDto) {
     const { limit, offset, order, since } = query;
     return this.repository.findByChatId(chatId, limit, offset, order, since);
   }

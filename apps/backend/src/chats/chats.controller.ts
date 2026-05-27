@@ -21,8 +21,8 @@ export class ChatsController {
   }
 
   @Get(':id')
-  getChat(@Param('id') chatId: string, @CurrentUser('userId') userId: string) {
-    return this.service.getChat(chatId, userId);
+  getChat(@Param('id') chatId: string) {
+    return this.service.getChat(chatId);
   }
 
   @Post(':id/join')

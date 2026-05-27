@@ -22,9 +22,8 @@ export class MessagesController {
   @Get()
   getMessages(
     @Param('chatId') chatId: string,
-    @CurrentUser('userId') userId: string,
     @Query() query: GetMessagesDto,
   ) {
-    return this.service.getMessages(chatId, userId, query);
+    return this.service.getMessages(chatId, query);
   }
 }

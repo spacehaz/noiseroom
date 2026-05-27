@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { ChatsRepository } from './chats.repository';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { JoinChatDto } from './dto/join-chat.dto';

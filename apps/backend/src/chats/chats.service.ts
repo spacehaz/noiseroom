@@ -42,4 +42,8 @@ export class ChatsService {
 
     return this.repository.getEncryptedVocabulary(chatId, userId);
   }
+
+  leaveAllChats(userId: string) {
+    return this.repository.leaveAllChats(userId);
+  }
 }

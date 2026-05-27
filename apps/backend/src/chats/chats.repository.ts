@@ -50,4 +50,8 @@ export class ChatsRepository {
       select: { encryptedVocabulary: true },
     });
   }
+
+  leaveAllChats(userId: string) {
+    return this.prisma.chatMember.deleteMany({ where: { userId } });
+  }
 }

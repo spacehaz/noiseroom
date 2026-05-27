@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { JwtGuard } from '../auth/guards/jwt.guard';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { ChatsService } from './chats.service';
@@ -37,5 +37,10 @@ export class ChatsController {
   @Get(':id/vocabulary')
   getVocabulary(@Param('id') chatId: string, @CurrentUser('userId') userId: string) {
     return this.service.getEncryptedVocabulary(chatId, userId);
+  }
+
+  @Delete('memberships')
+  leaveAllChats(@CurrentUser('userId') userId: string) {
+    return this.service.leaveAllChats(userId);
   }
 }

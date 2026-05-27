@@ -1,0 +1,35 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: noiseroom
+      POSTGRES_PASSWORD: noiseroom
+      POSTGRES_DB: noiseroom
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U noiseroom']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: apps/backend/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://noiseroom:noiseroom@db:5432/noiseroom
+      JWT_SECRET: ${JWT_SECRET}
+      PORT: 3000
+    ports:
+      - '3000:3000'
+
+volumes:
+  postgres_data:

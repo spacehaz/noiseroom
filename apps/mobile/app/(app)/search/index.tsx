@@ -34,7 +34,7 @@ export default function SearchScreen() {
   return (
     <Container>
       <Header>
-        <Button title="←" onClick={() => router.back()} variant="secondary" size="sm" />
+        <Button title="←" onClick={() => router.back()} variant="secondary" />
         <SearchInput
           ref={inputRef}
           value={query}

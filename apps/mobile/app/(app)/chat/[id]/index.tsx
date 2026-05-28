@@ -62,11 +62,11 @@ export default function ChatScreen() {
   }
 
   function decryptMessage(ciphertext: string): string {
-    if (!vocabulary) return '[no vocabulary]';
+    if (!vocabulary) return ciphertext;
     try {
       return decrypt(ciphertext, vocabulary);
     } catch {
-      return '[decrypt failed]';
+      return ciphertext;
     }
   }
 

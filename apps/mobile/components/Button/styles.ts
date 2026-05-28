@@ -5,8 +5,9 @@ export const Touchable = styled.TouchableOpacity<{ variant: 'primary' | 'seconda
   padding-horizontal: ${({ theme, size }) => size === 'sm' ? theme.spacing.sm : theme.spacing.md}px;
   background-color: ${({ theme, variant }) =>
     variant === 'primary' ? theme.colors.accent : 'transparent'};
-  border-width: ${({ variant }) => (variant === 'secondary' ? '1px' : '0px')};
-  border-color: ${({ theme }) => theme.colors.highlight};
+  border-width: 1px;
+  border-color: ${({ theme, variant }) =>
+    variant === 'secondary' ? theme.colors.highlight : 'transparent'};
   align-self: flex-start;
 `;
 

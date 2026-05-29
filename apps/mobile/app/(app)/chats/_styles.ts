@@ -61,4 +61,5 @@ export const Footer = styled.View`
   border-top-color: ${({ theme }) => theme.colors.border};
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing.sm}px;
+  justify-content: space-between;
 `;

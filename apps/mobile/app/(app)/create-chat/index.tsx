@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { KeyboardAvoidingView, Platform } from 'react-native';
 import { router } from 'expo-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { AlphabetType, SubstitutionMode, Vocabulary, randomSubstitutionLayer, randomHomophoneLayer, randomSpaceLayer, randomNullLayer } from '@noiseroom/cipher';
+import { AlphabetType, SubstitutionMode, Vocabulary, randomSubstitutionLayer, manualSubstitutionLayer, randomHomophoneLayer, randomSpaceLayer, randomNullLayer } from '@noiseroom/cipher';
 import { api } from '@/lib/api';
 import { encryptVocabulary, saveVocabularyLocally } from '@/lib/vault';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -24,6 +24,7 @@ const INITIAL_CONFIG: WizardConfig = {
   name: '',
   alphabet: null,
   substitution: null,
+  manualSubstitutionMap: null,
   homophones: false,
   space: false,
   nullSymbols: false,
@@ -34,7 +35,9 @@ function buildVocabulary(config: WizardConfig): Vocabulary {
   let charMap: Record<string, string[]> = {};
   let nullSymbols: string[] = [];
 
-  if (config.substitution) {
+  if (config.manualSubstitutionMap) {
+    charMap = manualSubstitutionLayer(config.manualSubstitutionMap);
+  } else if (config.substitution) {
     charMap = randomSubstitutionLayer(alphabet, config.substitution);
   }
   if (config.homophones && Object.keys(charMap).length > 0) {
@@ -58,6 +61,7 @@ interface Chat {
 export default function CreateChatScreen() {
   const dispatch = useAppDispatch();
   const pin = useAppSelector((state) => state.auth.pin)!;
+  const username = useAppSelector((state) => state.auth.username)!;
   const queryClient = useQueryClient();
 
   const [step, setStep] = useState(0);
@@ -83,7 +87,7 @@ export default function CreateChatScreen() {
       return { chat, vocabulary };
     },
     onSuccess: async ({ chat, vocabulary }) => {
-      await saveVocabularyLocally(chat.id, vocabulary, pin);
+      await saveVocabularyLocally(username, chat.id, vocabulary, pin);
       dispatch(setVocabulary({ chatId: chat.id, vocabulary }));
       queryClient.invalidateQueries({ queryKey: ['chats'] });
       router.replace(`/(app)/chat/${chat.id}`);
@@ -93,7 +97,15 @@ export default function CreateChatScreen() {
   const steps = [
     <NameStep key="name" value={config.name} onNext={(name) => update('name', name)} />,
     <AlphabetStep key="alphabet" value={config.alphabet} onNext={(alphabet: AlphabetType) => update('alphabet', alphabet)} />,
-    <SubstitutionStep key="substitution" value={config.substitution} onNext={(substitution: SubstitutionMode | null) => update('substitution', substitution)} />,
+    <SubstitutionStep
+      key="substitution"
+      value={config.substitution}
+      alphabet={config.alphabet!}
+      onNext={(substitution, manualMap) => {
+        setConfig((c) => ({ ...c, substitution, manualSubstitutionMap: manualMap ?? null }));
+        next();
+      }}
+    />,
     <HomophonesStep key="homophones" value={config.homophones} onNext={(homophones) => update('homophones', homophones)} />,
     <SpaceStep key="space" value={config.space} onNext={(space) => update('space', space)} />,
     <NullSymbolsStep key="nullSymbols" value={config.nullSymbols} onNext={(nullSymbols) => update('nullSymbols', nullSymbols)} />,

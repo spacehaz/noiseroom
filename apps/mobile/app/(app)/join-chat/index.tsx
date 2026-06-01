@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Vocabulary } from '@noiseroom/cipher';
 import { api } from '@/lib/api';
 import { encryptVocabulary, saveVocabularyLocally } from '@/lib/vault';
+import { socketClient } from '@/lib/socket';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { setVocabulary } from '@/store/vocabularies.slice';
 import { Button, Text } from '@/components';
@@ -16,6 +17,7 @@ export default function JoinChatScreen() {
 
   const dispatch = useAppDispatch();
   const pin = useAppSelector((state) => state.auth.pin)!;
+  const username = useAppSelector((state) => state.auth.username)!;
   const queryClient = useQueryClient();
 
   const { mutate, isPending, error } = useMutation({
@@ -39,9 +41,10 @@ export default function JoinChatScreen() {
       return { chatId, vocabulary };
     },
     onSuccess: async ({ chatId, vocabulary }) => {
-      await saveVocabularyLocally(chatId, vocabulary, pin);
+      await saveVocabularyLocally(username, chatId, vocabulary, pin);
       dispatch(setVocabulary({ chatId, vocabulary }));
       queryClient.invalidateQueries({ queryKey: ['chats'] });
+      socketClient.instance?.emit('join_chat', { chatId });
       router.replace(`/(app)/chat/${chatId}`);
     },
     onError: () => {

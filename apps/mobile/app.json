@@ -2,6 +2,12 @@
   "expo": {
     "name": "noiseroom",
     "slug": "noiseroom",
+    "owner": "spacehaz",
+    "extra": {
+      "eas": {
+        "projectId": "15e94396-47a4-47c6-9a37-1251a05d35ff"
+      }
+    },
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -9,6 +15,7 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
+      "bundleIdentifier": "com.noiseroom.app",
       "supportsTablet": true
     },
     "android": {

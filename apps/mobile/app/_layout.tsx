@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -48,10 +49,12 @@ export default function RootLayout() {
   if (!loaded) return null;
 
   return (
-    <Provider store={store}>
-      <QueryClientProvider client={queryClient}>
-        <AppProviders />
-      </QueryClientProvider>
-    </Provider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <Provider store={store}>
+        <QueryClientProvider client={queryClient}>
+          <AppProviders />
+        </QueryClientProvider>
+      </Provider>
+    </GestureHandlerRootView>
   );
 }

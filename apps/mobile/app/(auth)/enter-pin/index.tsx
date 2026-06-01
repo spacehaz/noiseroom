@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { KeyboardAvoidingView, Platform } from 'react-native';
 import { router } from 'expo-router';
-import { useAppDispatch } from '@/store/hooks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { setPin } from '@/store/auth.slice';
 import { loadVocabularies, clearVocabularies } from '@/store/vocabularies.slice';
 import {
@@ -18,6 +18,7 @@ import { Container, Fields, Actions } from './_styles';
 
 export default function EnterPinScreen() {
   const dispatch = useAppDispatch();
+  const username = useAppSelector((state) => state.auth.username)!;
   const [pin, setPinValue] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -30,19 +31,19 @@ export default function EnterPinScreen() {
 
     setLoading(true);
     try {
-      const attempts = await getAttempts();
+      const attempts = await getAttempts(username);
 
       if (attempts >= MAX_PIN_ATTEMPTS) {
         setError('too many wrong attempts — all vocabularies wiped');
         return;
       }
 
-      const valid = await verifyPin(pin);
+      const valid = await verifyPin(username, pin);
 
       if (!valid) {
-        const next = await incrementAttempts();
+        const next = await incrementAttempts(username);
         if (next >= MAX_PIN_ATTEMPTS) {
-          await wipeAllVocabularies();
+          await wipeAllVocabularies(username);
           dispatch(clearVocabularies());
           setError('too many wrong attempts — all vocabularies wiped');
         } else {
@@ -52,8 +53,8 @@ export default function EnterPinScreen() {
         return;
       }
 
-      await resetAttempts();
-      const byChat = await loadAllVocabularies(pin);
+      await resetAttempts(username);
+      const byChat = await loadAllVocabularies(username, pin);
       dispatch(loadVocabularies(byChat));
       dispatch(setPin(pin));
       router.replace('/(app)/chats');

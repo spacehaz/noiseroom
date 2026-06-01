@@ -20,7 +20,7 @@ export default function ProfileScreen() {
   const { mutate: leaveAll, isPending: isLeaving } = useMutation({
     mutationFn: () => api.fetch('/chats/memberships', { method: 'DELETE' }),
     onSuccess: async () => {
-      await wipeAllVocabularies();
+      await wipeAllVocabularies(username);
       dispatch(clearVocabularies());
       queryClient.invalidateQueries({ queryKey: ['chats'] });
       setConfirmLeave(false);
@@ -32,6 +32,8 @@ export default function ProfileScreen() {
     socketClient.disconnect();
     await clearToken();
     dispatch(clearAuth());
+    dispatch(clearVocabularies());
+    queryClient.clear();
     router.replace('/(auth)/login');
   }
 

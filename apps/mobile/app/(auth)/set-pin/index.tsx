@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { KeyboardAvoidingView, Platform } from 'react-native';
 import { router } from 'expo-router';
-import { useAppDispatch } from '@/store/hooks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { setPin } from '@/store/auth.slice';
 import { setPinCanary } from '@/lib/vault';
 import { Button, Input, Title, Text } from '@/components';
@@ -9,6 +9,7 @@ import { Container, Fields, Actions } from './_styles';
 
 export default function SetPinScreen() {
   const dispatch = useAppDispatch();
+  const username = useAppSelector((state) => state.auth.username)!;
   const [pin, setPinValue] = useState('');
   const [confirm, setConfirm] = useState('');
   const [error, setError] = useState('');
@@ -22,7 +23,7 @@ export default function SetPinScreen() {
       setError('pins do not match');
       return;
     }
-    await setPinCanary(pin);
+    await setPinCanary(username, pin);
     dispatch(setPin(pin));
     router.replace('/(app)/chats');
   }

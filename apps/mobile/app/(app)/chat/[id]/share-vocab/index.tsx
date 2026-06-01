@@ -1,12 +1,24 @@
+import { useEffect, useState } from 'react';
+import { Dimensions } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import QRCode from 'react-native-qrcode-svg';
 import { useAppSelector } from '@/store/hooks';
 import { Button, Text } from '@/components';
 import { Container, Header, HeaderTitle, QrContainer, QrBorder, HintText } from './_styles';
 
+const PADDING = 32 + 4; // QrContainer padding + QrBorder padding
+
 export default function ShareVocabScreen() {
   const { id: chatId } = useLocalSearchParams<{ id: string }>();
   const vocabulary = useAppSelector((state) => state.vocabularies.byChat[chatId]);
+  const [nonce, setNonce] = useState(() => Date.now());
+
+  const qrSize = Dimensions.get('window').width - PADDING * 2;
+
+  useEffect(() => {
+    const interval = setInterval(() => setNonce(Date.now()), 2000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <Container>
@@ -20,8 +32,8 @@ export default function ShareVocabScreen() {
           <>
             <QrBorder>
               <QRCode
-                value={JSON.stringify({ chatId, vocabulary })}
-                size={220}
+                value={JSON.stringify({ chatId, vocabulary, nonce })}
+                size={qrSize}
                 color="#39ff14"
                 backgroundColor="#0a0a0a"
               />

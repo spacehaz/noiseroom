@@ -24,10 +24,14 @@ export default function JoinChatScreen() {
     mutationFn: async (data: string) => {
       let chatId: string;
       let vocabulary: Vocabulary;
+      let nonce: number | undefined;
       try {
-        ({ chatId, vocabulary } = JSON.parse(data));
+        ({ chatId, vocabulary, nonce } = JSON.parse(data));
       } catch {
         throw new Error('invalid QR code');
+      }
+      if (nonce !== undefined && Date.now() - nonce > 30000) {
+        throw new Error('QR code expired — ask for a new one');
       }
       const encryptedVocabulary = encryptVocabulary(vocabulary, pin);
       try {

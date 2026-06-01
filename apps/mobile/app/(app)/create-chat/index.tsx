@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AlphabetType, SubstitutionMode, Vocabulary, randomSubstitutionLayer, manualSubstitutionLayer, randomHomophoneLayer, randomSpaceLayer, randomNullLayer } from '@noiseroom/cipher';
 import { api } from '@/lib/api';
 import { encryptVocabulary, saveVocabularyLocally } from '@/lib/vault';
+import { socketClient } from '@/lib/socket';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { setVocabulary } from '@/store/vocabularies.slice';
 import { WizardConfig } from './_types';
@@ -90,6 +91,7 @@ export default function CreateChatScreen() {
       await saveVocabularyLocally(username, chat.id, vocabulary, pin);
       dispatch(setVocabulary({ chatId: chat.id, vocabulary }));
       queryClient.invalidateQueries({ queryKey: ['chats'] });
+      socketClient.instance?.emit('join_chat', { chatId: chat.id });
       router.replace(`/(app)/chat/${chat.id}`);
     },
   });

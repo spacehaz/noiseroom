@@ -31,7 +31,7 @@ export const QrContainer = styled.View`
 `;
 
 export const QrBorder = styled.View`
-  padding: ${({ theme }) => theme.spacing.lg}px;
+  padding: ${({ theme }) => theme.spacing.xs}px;
   border-width: 1px;
   border-color: ${({ theme }) => theme.colors.accent};
 `;

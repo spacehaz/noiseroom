@@ -1,6 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
 BACKUP_DIR="/var/backups/noiseroom"
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
 FILE="$BACKUP_DIR/noiseroom_$TIMESTAMP.sql.gz"

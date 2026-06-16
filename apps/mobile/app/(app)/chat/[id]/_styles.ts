@@ -54,6 +54,7 @@ export const InputRow = styled.View`
   flex-direction: row;
   align-items: center;
   padding: ${({ theme }) => theme.spacing.md}px;
+  padding-bottom: ${({ theme }) => theme.spacing.md + 10}px;
   border-top-width: 1px;
   border-top-color: ${({ theme }) => theme.colors.border};
   gap: ${({ theme }) => theme.spacing.sm}px;

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { KeyboardAvoidingView, Platform } from 'react-native';
 import { router } from 'expo-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { AlphabetType, SubstitutionMode, Vocabulary, randomSubstitutionLayer, manualSubstitutionLayer, randomHomophoneLayer, randomSpaceLayer, randomNullLayer } from '@noiseroom/cipher';
+import { AlphabetType, Vocabulary, randomSubstitutionLayer, manualSubstitutionLayer, randomHomophoneLayer, randomSpaceLayer, randomNullLayer } from '@noiseroom/cipher';
 import { api } from '@/lib/api';
 import { encryptVocabulary, saveVocabularyLocally } from '@/lib/vault';
 import { socketClient } from '@/lib/socket';

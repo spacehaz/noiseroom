@@ -66,7 +66,7 @@ export default function EnterPinScreen() {
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
       <Container>
-        <Title>// enter pin</Title>
+        <Title>{'// enter pin'}</Title>
         <Text muted size="sm">enter your pin to unlock vocabulary access for this session.</Text>
         <Fields>
           <Input

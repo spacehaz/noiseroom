@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
-import { FlatList } from 'react-native';
+import { FlatList, KeyboardAvoidingView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, router } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 import { encrypt, decrypt } from '@noiseroom/cipher';
@@ -17,6 +18,7 @@ import {
   InputRow,
   MessageInput,
   Empty,
+  MessageList
 } from './_styles';
 
 interface Message {
@@ -73,52 +75,59 @@ export default function ChatScreen() {
   const allMessages = [...initialMessages, ...liveMessages];
 
   return (
-    <Container>
-      <Header>
-        <Button title="←" onClick={() => router.back()} variant="secondary" size="sm" />
-        <HeaderTitle>{`> chat`}</HeaderTitle>
-        {vocabulary
-          ? <Button title="share" onClick={() => router.push(`/(app)/chat/${chatId}/share-vocab`)} variant="secondary" size="sm" />
-          : <Button title="scan" onClick={() => router.push('/(app)/join-chat')} variant="secondary" size="sm" />
-        }
-      </Header>
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
+      <Container>
+        <Header>
+          <Button title="←" onClick={() => router.back()} variant="secondary" size="sm" />
+          <HeaderTitle>{`> chat`}</HeaderTitle>
+          {vocabulary
+            ? <Button title="share" onClick={() => router.push(`/(app)/chat/${chatId}/share-vocab`)} variant="secondary" size="sm" />
+            : <Button title="scan" onClick={() => router.push('/(app)/join-chat')} variant="secondary" size="sm" />
+          }
+        </Header>
 
-      {isLoading ? (
-        <Empty><Text muted>loading...</Text></Empty>
-      ) : error ? (
-        <Empty><Text error>{error instanceof Error ? error.message : 'failed to load'}</Text></Empty>
-      ) : allMessages.length === 0 ? (
-        <Empty><Text muted>no messages yet</Text></Empty>
-      ) : (
-        <FlatList
-          ref={flatListRef}
-          data={allMessages}
-          keyExtractor={(item) => item.id}
-          onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: false })}
-          renderItem={({ item }) => {
-            const own = item.sender.username === userId;
-            return (
-              <MessageBubble own={own}>
-                {!own && <MessageSender>{item.sender.username}</MessageSender>}
-                <MessageText>{decryptMessage(item.ciphertext)}</MessageText>
-              </MessageBubble>
-            );
-          }}
-        />
-      )}
+        {isLoading ? (
+          <Empty><Text muted>loading...</Text></Empty>
+        ) : error ? (
+          <Empty><Text error>{error instanceof Error ? error.message : 'failed to load'}</Text></Empty>
+        ) : allMessages.length === 0 ? (
+          <Empty><Text muted>no messages yet</Text></Empty>
+        ) : (
+          <MessageList>
+            <FlatList
+              ref={flatListRef}
+              data={allMessages}
+              keyExtractor={(item) => item.id}
+              contentContainerStyle={{ padding: 10 }}
+              onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: false })}
+              renderItem={({ item }) => {
+                const own = item.sender.username === userId;
+                return (
+                  <MessageBubble own={own}>
+                    {!own && <MessageSender>{item.sender.username}</MessageSender>}
+                    <MessageText>{decryptMessage(item.ciphertext)}</MessageText>
+                  </MessageBubble>
+                );
+              }}
+            />
+          </MessageList>
+        )}
 
-      <InputRow>
-        <MessageInput
-          value={text}
-          onChangeText={setText}
-          placeholder="type a message..."
-          placeholderTextColor="#444444"
-          returnKeyType="send"
-          onSubmitEditing={sendMessage}
-          editable={!!vocabulary}
-        />
-        <Button title="send" onClick={sendMessage} disabled={!text.trim() || !vocabulary} />
-      </InputRow>
-    </Container>
+        <SafeAreaView edges={['bottom']} style={{ backgroundColor: '#0a0a0a' }}>
+          <InputRow>
+            <MessageInput
+              value={text}
+              onChangeText={setText}
+              placeholder="type a message..."
+              placeholderTextColor="#444444"
+              returnKeyType="send"
+              onSubmitEditing={sendMessage}
+              editable={!!vocabulary}
+            />
+            <Button title="send" onClick={sendMessage} disabled={!text.trim() || !vocabulary} />
+          </InputRow>
+        </SafeAreaView>
+      </Container>
+    </KeyboardAvoidingView>
   );
 }

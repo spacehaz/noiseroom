@@ -41,3 +41,7 @@ apps/backend/prisma/migrations/*.db
 
 # Docker
 *.pid
+
+
+
+test.swift

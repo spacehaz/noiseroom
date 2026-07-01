@@ -3,11 +3,13 @@
     "name": "noiseroom",
     "slug": "noiseroom",
     "owner": "spacehaz",
+    "plaforms": ["ios", "android"],
     "extra": {
       "eas": {
         "projectId": "15e94396-47a4-47c6-9a37-1251a05d35ff"
       }
     },
+    "backgroundColor": "#0a0a0a",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",

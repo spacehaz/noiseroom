@@ -1,7 +1,8 @@
 import { encrypt } from '../encrypt';
 import { decrypt as decryptFn } from '../decrypt';
-import { generateVocabulary, manualSubstitutionLayer, manualHomophoneLayer, manualSpaceLayer, manualNullLayer } from '../vocabulary';
+import { generateVocabulary } from '../vocabulary';
 import type { Vocabulary } from '../types';
+import { seeded } from '../testing/seeded-random';
 
 const fixedVocab: Vocabulary = {
   alphabet: 'latin',
@@ -20,14 +21,17 @@ const fixedVocab: Vocabulary = {
 
 describe('encrypt', () => {
   it('produces output of different content than input', () => {
-    const cipher = encrypt('hello', fixedVocab);
+    const rng = seeded()
+    const cipher = encrypt('hello', fixedVocab, rng);
     expect(cipher).not.toBe('hello');
   });
 
   it('substitutes every known character', () => {
     // with no null symbols, every char should be substituted
     const noNullVocab: Vocabulary = { ...fixedVocab, nullSymbols: [] };
-    const cipher = encrypt('hello', noNullVocab);
+    const rng = seeded()
+
+    const cipher = encrypt('hello', noNullVocab, rng);
     // 'hello' → h→d, e→one of [l,%,Ω], l→x, l→x, o→r
     const validFirstChars = ['d'];
     const validSecondChars = ['l', '%', 'Ω'];
@@ -41,16 +45,20 @@ describe('encrypt', () => {
   it('passes through characters not in the charMap', () => {
     const noNullVocab: Vocabulary = { ...fixedVocab, nullSymbols: [] };
     // '!' is not in charMap — should pass through unchanged
-    const cipher = encrypt('!', noNullVocab);
+    const rng = seeded()
+
+    const cipher = encrypt('!', noNullVocab, rng);
     expect(cipher).toBe('!');
   });
 
   it('inserts null symbols into the output', () => {
     // run many times to reduce flakiness (30% chance per char)
     const nullSymbols = fixedVocab.nullSymbols;
+    const rng = seeded()
+
     let foundNull = false;
     for (let i = 0; i < 50; i++) {
-      const cipher = encrypt('hello world', fixedVocab);
+      const cipher = encrypt('hello world', fixedVocab, rng);
       if (nullSymbols.some((sym) => cipher.includes(sym))) {
         foundNull = true;
         break;
@@ -60,7 +68,9 @@ describe('encrypt', () => {
   });
 
   it('produces different output on repeated calls (randomness)', () => {
-    const results = new Set(Array.from({ length: 20 }, () => encrypt('hello', fixedVocab)));
+        const rng = seeded()
+
+    const results = new Set(Array.from({ length: 20 }, () => encrypt('hello', fixedVocab, rng)));
     // with homophones and nulls, not all 20 results should be identical
     expect(results.size).toBeGreaterThan(1);
   });
@@ -98,37 +108,47 @@ describe('decrypt', () => {
 describe('encrypt → decrypt round trip', () => {
   it('recovers original text with fixed vocabulary', () => {
     const original = 'hello world';
-    const cipher = encrypt(original, fixedVocab);
+        const rng = seeded()
+
+    const cipher = encrypt(original, fixedVocab, rng);
     const recovered = decryptFn(cipher, fixedVocab);
     expect(recovered).toBe(original);
   });
 
   it('recovers original text with randomly generated vocabulary', () => {
-    const vocab = generateVocabulary('latin');
+        const rng = seeded()
+
+    const vocab = generateVocabulary('latin', rng);
     const original = 'hello world';
-    const cipher = encrypt(original, vocab);
+    const cipher = encrypt(original, vocab, rng);
     const recovered = decryptFn(cipher, vocab);
     expect(recovered).toBe(original);
   });
 
   it('recovers original text in shuffle mode', () => {
-    const vocab = generateVocabulary('latin', 'shuffle');
+        const rng = seeded()
+
+    const vocab = generateVocabulary('latin', rng, 'shuffle');
     const original = 'hello world';
-    const cipher = encrypt(original, vocab);
+    const cipher = encrypt(original, vocab, rng);
     const recovered = decryptFn(cipher, vocab);
     expect(recovered).toBe(original);
   });
 
   it('recovers cyrillic text', () => {
-    const vocab = generateVocabulary('cyrillic');
+        const rng = seeded()
+
+    const vocab = generateVocabulary('cyrillic', rng);
     const original = 'привет мир';
-    const cipher = encrypt(original, vocab);
+    const cipher = encrypt(original, vocab, rng);
     const recovered = decryptFn(cipher, vocab);
     expect(recovered).toBe(original);
   });
 
   it('recovers empty string', () => {
-    const cipher = encrypt('', fixedVocab);
+        const rng = seeded()
+
+    const cipher = encrypt('', fixedVocab, rng);
     expect(decryptFn(cipher, fixedVocab)).toBe('');
   });
 });

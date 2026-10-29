@@ -18,6 +18,7 @@ import { HomophonesStep } from './_steps/HomophonesStep';
 import { SpaceStep } from './_steps/SpaceStep';
 import { NullSymbolsStep } from './_steps/NullSymbolsStep';
 import { ReviewStep } from './_steps/ReviewStep';
+import { rng } from '@/lib/random';
 
 const TOTAL_STEPS = 7;
 
@@ -39,16 +40,16 @@ function buildVocabulary(config: WizardConfig): Vocabulary {
   if (config.manualSubstitutionMap) {
     charMap = manualSubstitutionLayer(config.manualSubstitutionMap);
   } else if (config.substitution) {
-    charMap = randomSubstitutionLayer(alphabet, config.substitution);
+    charMap = randomSubstitutionLayer(alphabet, rng, config.substitution);
   }
   if (config.homophones && Object.keys(charMap).length > 0) {
-    charMap = randomHomophoneLayer(charMap, alphabet);
+    charMap = randomHomophoneLayer(charMap, alphabet, rng);
   }
   if (config.space) {
-    charMap = randomSpaceLayer(charMap, alphabet);
+    charMap = randomSpaceLayer(charMap, alphabet,rng);
   }
   if (config.nullSymbols) {
-    nullSymbols = randomNullLayer(charMap, alphabet);
+    nullSymbols = randomNullLayer(charMap, alphabet, rng);
   }
 
   return { alphabet, charMap, nullSymbols };

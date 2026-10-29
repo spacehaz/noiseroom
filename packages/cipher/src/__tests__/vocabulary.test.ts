@@ -9,6 +9,7 @@ import {
   manualSpaceLayer,
   manualNullLayer,
 } from '../vocabulary';
+import { seeded } from '../testing/seeded-random';
 
 const LATIN_CHARS = 'abcdefghijklmnopqrstuvwxyz'.split('');
 const CYRILLIC_CHARS = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя'.split('');
@@ -18,28 +19,32 @@ const CYRILLIC_POPULAR = ['о', 'е', 'а', 'и', 'н', 'т', 'с', 'р', 'в', 
 describe('randomSubstitutionLayer', () => {
   describe('cross mode (default)', () => {
     it('assigns exactly one substitution per latin character', () => {
-      const charMap = randomSubstitutionLayer('latin');
+      const rng = seeded()
+      const charMap = randomSubstitutionLayer('latin', rng);
       for (const char of LATIN_CHARS) {
         expect(charMap[char]).toHaveLength(1);
       }
     });
 
     it('assigns exactly one substitution per cyrillic character', () => {
-      const charMap = randomSubstitutionLayer('cyrillic');
+      const rng = seeded()
+      const charMap = randomSubstitutionLayer('cyrillic', rng);
       for (const char of CYRILLIC_CHARS) {
         expect(charMap[char]).toHaveLength(1);
       }
     });
 
     it('produces no duplicate substitution symbols', () => {
-      const charMap = randomSubstitutionLayer('latin');
+      const rng = seeded()
+      const charMap = randomSubstitutionLayer('latin', rng);
       const allSubs = Object.values(charMap).flat();
       const unique = new Set(allSubs);
       expect(unique.size).toBe(allSubs.length);
     });
 
     it('does not use original latin chars as substitutions', () => {
-      const charMap = randomSubstitutionLayer('latin');
+      const rng = seeded()
+      const charMap = randomSubstitutionLayer('latin', rng);
       const allSubs = Object.values(charMap).flat();
       const latinSet = new Set(LATIN_CHARS);
       for (const sub of allSubs) {
@@ -48,7 +53,8 @@ describe('randomSubstitutionLayer', () => {
     });
 
     it('does not use original cyrillic chars as substitutions', () => {
-      const charMap = randomSubstitutionLayer('cyrillic');
+      const rng = seeded()
+      const charMap = randomSubstitutionLayer('cyrillic', rng);
       const allSubs = Object.values(charMap).flat();
       const cyrillicSet = new Set(CYRILLIC_CHARS);
       for (const sub of allSubs) {
@@ -59,7 +65,8 @@ describe('randomSubstitutionLayer', () => {
 
   describe('shuffle mode', () => {
     it('maps latin chars to latin chars only', () => {
-      const charMap = randomSubstitutionLayer('latin', 'shuffle');
+      const rng = seeded()
+      const charMap = randomSubstitutionLayer('latin', rng, 'shuffle');
       const allSubs = Object.values(charMap).flat();
       const latinSet = new Set(LATIN_CHARS);
       for (const sub of allSubs) {
@@ -68,7 +75,8 @@ describe('randomSubstitutionLayer', () => {
     });
 
     it('maps cyrillic chars to cyrillic chars only', () => {
-      const charMap = randomSubstitutionLayer('cyrillic', 'shuffle');
+      const rng = seeded()
+      const charMap = randomSubstitutionLayer('cyrillic', rng, 'shuffle');
       const allSubs = Object.values(charMap).flat();
       const cyrillicSet = new Set(CYRILLIC_CHARS);
       for (const sub of allSubs) {
@@ -77,14 +85,16 @@ describe('randomSubstitutionLayer', () => {
     });
 
     it('is a derangement — no char maps to itself', () => {
-      const charMap = randomSubstitutionLayer('latin', 'shuffle');
+      const rng = seeded()
+      const charMap = randomSubstitutionLayer('latin', rng, 'shuffle');
       for (const [char, subs] of Object.entries(charMap)) {
         expect(subs[0]).not.toBe(char);
       }
     });
 
     it('produces no duplicate substitution symbols', () => {
-      const charMap = randomSubstitutionLayer('latin', 'shuffle');
+      const rng = seeded()
+      const charMap = randomSubstitutionLayer('latin', rng, 'shuffle');
       const allSubs = Object.values(charMap).flat();
       const unique = new Set(allSubs);
       expect(unique.size).toBe(allSubs.length);
@@ -94,32 +104,36 @@ describe('randomSubstitutionLayer', () => {
 
 describe('randomHomophoneLayer', () => {
   it('adds multiple options to popular latin letters', () => {
-    const base = randomSubstitutionLayer('latin');
-    const charMap = randomHomophoneLayer(base, 'latin');
+    const rng = seeded()
+    const base = randomSubstitutionLayer('latin', rng);
+    const charMap = randomHomophoneLayer(base, 'latin', rng);
     for (const char of LATIN_POPULAR) {
       expect(charMap[char]!.length).toBeGreaterThan(1);
     }
   });
 
   it('adds multiple options to popular cyrillic letters', () => {
-    const base = randomSubstitutionLayer('cyrillic');
-    const charMap = randomHomophoneLayer(base, 'cyrillic');
+    const rng = seeded()
+    const base = randomSubstitutionLayer('cyrillic', rng);
+    const charMap = randomHomophoneLayer(base, 'cyrillic', rng);
     for (const char of CYRILLIC_POPULAR) {
       expect(charMap[char]!.length).toBeGreaterThan(1);
     }
   });
 
   it('does not introduce duplicate symbols across the whole map', () => {
-    const base = randomSubstitutionLayer('latin');
-    const charMap = randomHomophoneLayer(base, 'latin');
+    const rng = seeded()
+    const base = randomSubstitutionLayer('latin', rng);
+    const charMap = randomHomophoneLayer(base, 'latin', rng);
     const allSubs = Object.values(charMap).flat();
     const unique = new Set(allSubs);
     expect(unique.size).toBe(allSubs.length);
   });
 
   it('does not modify non-popular letters', () => {
-    const base = randomSubstitutionLayer('latin');
-    const charMap = randomHomophoneLayer(base, 'latin');
+    const rng = seeded()
+    const base = randomSubstitutionLayer('latin', rng);
+    const charMap = randomHomophoneLayer(base, 'latin', rng);
     const nonPopular = LATIN_CHARS.filter((c) => !LATIN_POPULAR.includes(c));
     for (const char of nonPopular) {
       expect(charMap[char]).toHaveLength(1);
@@ -128,16 +142,18 @@ describe('randomHomophoneLayer', () => {
 });
 
 describe('randomSpaceLayer', () => {
+  const rng = seeded()
   it('adds space with at least 2 options', () => {
-    const base = randomSubstitutionLayer('latin');
-    const charMap = randomSpaceLayer(base, 'latin');
+    const base = randomSubstitutionLayer('latin', rng);
+    const charMap = randomSpaceLayer(base, 'latin', rng);
     expect(charMap[' ']).toBeDefined();
     expect(charMap[' ']!.length).toBeGreaterThanOrEqual(2);
   });
 
   it('does not use symbols already in the map', () => {
-    const base = randomSubstitutionLayer('latin');
-    const charMap = randomSpaceLayer(base, 'latin');
+    const rng = seeded()
+    const base = randomSubstitutionLayer('latin', rng);
+    const charMap = randomSpaceLayer(base, 'latin', rng);
     const nonSpaceSubs = new Set(
       Object.entries(charMap)
         .filter(([key]) => key !== ' ')
@@ -150,16 +166,19 @@ describe('randomSpaceLayer', () => {
 });
 
 describe('randomNullLayer', () => {
+  
   it('returns between 3 and 5 symbols', () => {
-    const charMap = randomSubstitutionLayer('latin');
-    const nullSymbols = randomNullLayer(charMap, 'latin');
+    const rng = seeded()
+    const charMap = randomSubstitutionLayer('latin', rng);
+    const nullSymbols = randomNullLayer(charMap, 'latin', rng);
     expect(nullSymbols.length).toBeGreaterThanOrEqual(3);
     expect(nullSymbols.length).toBeLessThanOrEqual(5);
   });
 
   it('does not overlap with any substitution symbol', () => {
-    const charMap = randomSubstitutionLayer('latin');
-    const nullSymbols = randomNullLayer(charMap, 'latin');
+    const rng = seeded()
+    const charMap = randomSubstitutionLayer('latin', rng);
+    const nullSymbols = randomNullLayer(charMap, 'latin', rng);
     const allSubs = new Set(Object.values(charMap).flat());
     for (const sym of nullSymbols) {
       expect(allSubs.has(sym)).toBe(false);
@@ -219,26 +238,30 @@ describe('manualNullLayer', () => {
 
 describe('generateVocabulary', () => {
   it('covers all latin chars in charMap', () => {
-    const vocab = generateVocabulary('latin');
+    const rng = seeded()
+    const vocab = generateVocabulary('latin', rng);
     for (const char of LATIN_CHARS) {
       expect(vocab.charMap[char]).toBeDefined();
     }
   });
 
   it('covers all cyrillic chars in charMap', () => {
-    const vocab = generateVocabulary('cyrillic');
+    const rng = seeded()
+    const vocab = generateVocabulary('cyrillic', rng);
     for (const char of CYRILLIC_CHARS) {
       expect(vocab.charMap[char]).toBeDefined();
     }
   });
 
   it('includes space in charMap', () => {
-    const vocab = generateVocabulary('latin');
+    const rng = seeded()
+    const vocab = generateVocabulary('latin', rng);
     expect(vocab.charMap[' ']).toBeDefined();
   });
 
   it('has null symbols with no overlap with charMap substitutions', () => {
-    const vocab = generateVocabulary('latin');
+    const rng = seeded()
+    const vocab = generateVocabulary('latin', rng);
     const allSubs = new Set(Object.values(vocab.charMap).flat());
     for (const sym of vocab.nullSymbols) {
       expect(allSubs.has(sym)).toBe(false);
@@ -246,12 +269,14 @@ describe('generateVocabulary', () => {
   });
 
   it('sets the correct alphabet field', () => {
-    expect(generateVocabulary('latin').alphabet).toBe('latin');
-    expect(generateVocabulary('cyrillic').alphabet).toBe('cyrillic');
+    const rng = seeded()
+    expect(generateVocabulary('latin', rng).alphabet).toBe('latin');
+    expect(generateVocabulary('cyrillic', rng).alphabet).toBe('cyrillic');
   });
 
   it('works in shuffle mode with no char mapping to itself', () => {
-    const vocab = generateVocabulary('latin', 'shuffle');
+    const rng = seeded()
+    const vocab = generateVocabulary('latin', rng, 'shuffle');
     for (const [char, subs] of Object.entries(vocab.charMap)) {
       if (char !== ' ') expect(subs[0]).not.toBe(char);
     }

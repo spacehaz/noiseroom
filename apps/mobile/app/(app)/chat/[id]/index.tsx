@@ -8,6 +8,7 @@ import { api } from '@/lib/api';
 import { socketClient } from '@/lib/socket';
 import { useAppSelector } from '@/store/hooks';
 import { Button, Text } from '@/components';
+import { rng } from '@/lib/random';
 import {
   Container,
   Header,
@@ -58,7 +59,7 @@ export default function ChatScreen() {
   function sendMessage() {
     if (!text.trim() || !vocabulary) return;
 
-    const ciphertext = encrypt(text.trim(), vocabulary);
+    const ciphertext = encrypt(text.trim(), vocabulary, rng);
     socketClient.instance?.emit('send_message', { chatId, ciphertext });
     setText('');
   }

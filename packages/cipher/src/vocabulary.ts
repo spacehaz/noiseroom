@@ -1,3 +1,4 @@
+import { RandomSource } from './random';
 import { AlphabetType, Vocabulary } from './types';
 
 const LATIN_CHARS = 'abcdefghijklmnopqrstuvwxyz'.split('');
@@ -10,27 +11,27 @@ const CYRILLIC_POPULAR = ['о', 'е', 'а', 'и', 'н', 'т', 'с', 'р', 'в', 
 
 export type SubstitutionMode = 'cross' | 'shuffle';
 
-function shuffle<T>(arr: T[]): T[] {
+function shuffle<T>(arr: T[], rng: RandomSource): T[] {
   const result = [...arr];
   for (let i = result.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
+    const j = rng.int(i + 1);
     [result[i], result[j]] = [result[j]!, result[i]!];
   }
   return result;
 }
 
 // keeps shuffling until no char maps to itself (derangement)
-function derange(chars: string[]): string[] {
+function derange(chars: string[], rng: RandomSource): string[] {
   let result: string[];
   do {
-    result = shuffle(chars);
+    result = shuffle(chars, rng);
   } while (chars.some((c, i) => c === result[i]));
   return result;
 }
 
-function availablePool(alphabet: AlphabetType, exclude: Set<string>): string[] {
+function availablePool(alphabet: AlphabetType, exclude: Set<string>, rng: RandomSource): string[] {
   const base = alphabet === 'latin' ? CYRILLIC_CHARS : LATIN_CHARS;
-  return shuffle([...base, ...DIGITS, ...SPECIAL].filter((c) => !exclude.has(c)));
+  return shuffle([...base, ...DIGITS, ...SPECIAL].filter((c) => !exclude.has(c)), rng);
 }
 
 function usedSymbols(alphabet: AlphabetType, charMap: Record<string, string[]>): Set<string> {
@@ -47,18 +48,19 @@ function usedSymbols(alphabet: AlphabetType, charMap: Record<string, string[]>):
 // mode 'shuffle' — substitutions are a derangement of the same alphabet (z → w, w → k, ...)
 export function randomSubstitutionLayer(
   alphabet: AlphabetType,
+  rng: RandomSource,
   mode: SubstitutionMode = 'cross',
 ): Record<string, string[]> {
   const originalChars = alphabet === 'latin' ? LATIN_CHARS : CYRILLIC_CHARS;
   const charMap: Record<string, string[]> = {};
 
   if (mode === 'shuffle') {
-    const deranged = derange(originalChars);
+    const deranged = derange(originalChars, rng);
     originalChars.forEach((char, i) => {
       charMap[char] = [deranged[i]!];
     });
   } else {
-    const pool = availablePool(alphabet, new Set(originalChars));
+    const pool = availablePool(alphabet, new Set(originalChars), rng);
     originalChars.forEach((char, i) => {
       charMap[char] = [pool[i]!];
     });
@@ -80,15 +82,16 @@ export function manualSubstitutionLayer(map: Record<string, string>): Record<str
 export function randomHomophoneLayer(
   charMap: Record<string, string[]>,
   alphabet: AlphabetType,
+  rng: RandomSource
 ): Record<string, string[]> {
   const popular = alphabet === 'latin' ? LATIN_POPULAR : CYRILLIC_POPULAR;
-  const pool = availablePool(alphabet, usedSymbols(alphabet, charMap));
+  const pool = availablePool(alphabet, usedSymbols(alphabet, charMap), rng);
   const result = { ...charMap };
   let poolIndex = 0;
 
   for (const char of popular) {
     if (!result[char]) continue;
-    const count = Math.floor(Math.random() * 2) + 2; // 2 or 3 extras
+    const count = rng.int(2) + 2; // 2 or 3 extras
     for (let i = 0; i < count && poolIndex < pool.length; i++) {
       result[char]!.push(pool[poolIndex++]!);
     }
@@ -113,9 +116,10 @@ export function manualHomophoneLayer(
 export function randomSpaceLayer(
   charMap: Record<string, string[]>,
   alphabet: AlphabetType,
+  rng: RandomSource
 ): Record<string, string[]> {
-  const pool = availablePool(alphabet, usedSymbols(alphabet, charMap));
-  const count = Math.floor(Math.random() * 2) + 2; // 2 or 3 options
+  const pool = availablePool(alphabet, usedSymbols(alphabet, charMap), rng);
+  const count =  rng.int(2) + 2; // 2 or 3 options
   return { ...charMap, ' ': pool.slice(0, count) };
 }
 
@@ -131,9 +135,10 @@ export function manualSpaceLayer(
 export function randomNullLayer(
   charMap: Record<string, string[]>,
   alphabet: AlphabetType,
+  rng: RandomSource
 ): string[] {
-  const pool = availablePool(alphabet, usedSymbols(alphabet, charMap));
-  const count = Math.floor(Math.random() * 3) + 3; // 3 to 5
+  const pool = availablePool(alphabet, usedSymbols(alphabet, charMap), rng);
+  const count = rng.int(3) + 3; // 3 to 5
   return pool.slice(0, count);
 }
 
@@ -145,12 +150,13 @@ export function manualNullLayer(symbols: string[]): string[] {
 // Generates a full vocabulary by calling all random layer generators
 export function generateVocabulary(
   alphabet: AlphabetType,
+  rng: RandomSource,
   mode: SubstitutionMode = 'cross',
 ): Vocabulary {
-  let charMap = randomSubstitutionLayer(alphabet, mode);
-  charMap = randomHomophoneLayer(charMap, alphabet);
-  charMap = randomSpaceLayer(charMap, alphabet);
-  const nullSymbols = randomNullLayer(charMap, alphabet);
+  let charMap = randomSubstitutionLayer(alphabet, rng, mode);
+  charMap = randomHomophoneLayer(charMap, alphabet, rng);
+  charMap = randomSpaceLayer(charMap, alphabet, rng);
+  const nullSymbols = randomNullLayer(charMap, alphabet, rng);
 
   return { alphabet, charMap, nullSymbols };
 }

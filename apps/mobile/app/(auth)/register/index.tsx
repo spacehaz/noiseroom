@@ -39,7 +39,10 @@ export default function RegisterScreen() {
   }
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={{ flex: 1 }}
+    >
       <Container>
         <Title>// register</Title>
         <Fields>
@@ -70,7 +73,11 @@ export default function RegisterScreen() {
             returnKeyType="done"
             onSubmitEditing={handleRegister}
           />
-          {error ? <Text error size="sm">{error}</Text> : null}
+          {error ? (
+            <Text error size="sm">
+              {error}
+            </Text>
+          ) : null}
         </Fields>
         <Actions>
           <Button title="register" onClick={handleRegister} loading={loading} />

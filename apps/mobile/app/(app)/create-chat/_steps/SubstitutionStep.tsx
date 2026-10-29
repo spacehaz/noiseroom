@@ -35,13 +35,17 @@ export function SubstitutionStep({ value, alphabet, onNext }: Props) {
   return (
     <StepContent>
       <Title size="lg">// substitution</Title>
-      <Text muted size="sm">each letter maps to a different symbol</Text>
+      <Text muted size="sm">
+        each letter maps to a different symbol
+      </Text>
       <Options>
         {OPTIONS.map(([v, label]) => (
           <OptionButton
             key={label}
             selected={v !== 'manual' && value === v}
-            onPress={() => v === 'manual' ? setShowManual(true) : onNext(v as SubstitutionMode | null)}
+            onPress={() =>
+              v === 'manual' ? setShowManual(true) : onNext(v as SubstitutionMode | null)
+            }
           >
             <OptionLabel selected={v !== 'manual' && value === v}>{`> ${label}`}</OptionLabel>
           </OptionButton>

@@ -28,4 +28,5 @@ export const vocabulariesSlice = createSlice({
   },
 });
 
-export const { setVocabulary, removeVocabulary, loadVocabularies, clearVocabularies } = vocabulariesSlice.actions;
+export const { setVocabulary, removeVocabulary, loadVocabularies, clearVocabularies } =
+  vocabulariesSlice.actions;

@@ -32,8 +32,8 @@ export const MessageBubble = styled.View<{ own: boolean }>`
   margin-horizontal: ${({ theme }) => theme.spacing.md}px;
   margin-vertical: ${({ theme }) => theme.spacing.xs}px;
   border-width: 1px;
-  border-color: ${({ theme, own }) => own ? theme.colors.accent : theme.colors.border};
-  align-self: ${({ own }) => own ? 'flex-end' : 'flex-start'};
+  border-color: ${({ theme, own }) => (own ? theme.colors.accent : theme.colors.border)};
+  align-self: ${({ own }) => (own ? 'flex-end' : 'flex-start')};
   max-width: 80%;
 `;
 

@@ -9,7 +9,14 @@ import { socketClient } from '@/lib/socket';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { setVocabulary } from '@/store/vocabularies.slice';
 import { Button, Text } from '@/components';
-import { Container, Header, HeaderTitle, PermissionContainer, CameraContainer, ErrorBar } from './_styles';
+import {
+  Container,
+  Header,
+  HeaderTitle,
+  PermissionContainer,
+  CameraContainer,
+  ErrorBar,
+} from './_styles';
 
 export default function JoinChatScreen() {
   const [permission, requestPermission] = useCameraPermissions();

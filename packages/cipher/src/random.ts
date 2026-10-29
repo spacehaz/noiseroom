@@ -3,9 +3,7 @@ export interface RandomSource {
   int(max: number): number;
 }
 
-export function createCryptoRandom(
-  getRandomValues: (a: Uint32Array) => Uint32Array,
-): RandomSource {
+export function createCryptoRandom(getRandomValues: (a: Uint32Array) => Uint32Array): RandomSource {
   const buf = new Uint32Array(1);
   return {
     int(max) {

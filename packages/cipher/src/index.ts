@@ -1,6 +1,6 @@
 export { encrypt } from './encrypt';
 export { decrypt } from './decrypt';
-export { createCryptoRandom, type RandomSource } from './random'
+export { createCryptoRandom, type RandomSource } from './random';
 export {
   generateVocabulary,
   randomSubstitutionLayer,

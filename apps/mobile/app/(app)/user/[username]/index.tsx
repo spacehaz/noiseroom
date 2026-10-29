@@ -14,7 +14,11 @@ interface UserProfile {
 export default function UserScreen() {
   const { username } = useLocalSearchParams<{ username: string }>();
 
-  const { data: user, isLoading, error } = useQuery({
+  const {
+    data: user,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['user', username],
     queryFn: () => api.fetch<UserProfile>(`/users/${username}`),
   });
@@ -27,11 +31,17 @@ export default function UserScreen() {
       </Header>
 
       {isLoading ? (
-        <Empty><Text muted>loading...</Text></Empty>
+        <Empty>
+          <Text muted>loading...</Text>
+        </Empty>
       ) : error ? (
-        <Empty><Text error>{error instanceof Error ? error.message : 'failed to load'}</Text></Empty>
+        <Empty>
+          <Text error>{error instanceof Error ? error.message : 'failed to load'}</Text>
+        </Empty>
       ) : !user || user.chats.length === 0 ? (
-        <Empty><Text muted>no chats</Text></Empty>
+        <Empty>
+          <Text muted>no chats</Text>
+        </Empty>
       ) : (
         <FlatList
           data={user.chats}
@@ -39,7 +49,9 @@ export default function UserScreen() {
           renderItem={({ item }) => (
             <ChatItem onPress={() => router.push(`/(app)/chat/${item.id}`)}>
               <ChatName>{`> ${item.name}`}</ChatName>
-              <ChatMeta>{item.memberCount} member{item.memberCount !== 1 ? 's' : ''}</ChatMeta>
+              <ChatMeta>
+                {item.memberCount} member{item.memberCount !== 1 ? 's' : ''}
+              </ChatMeta>
             </ChatItem>
           )}
         />

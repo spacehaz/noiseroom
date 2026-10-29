@@ -20,10 +20,7 @@ export class MessagesController {
   }
 
   @Get()
-  getMessages(
-    @Param('chatId') chatId: string,
-    @Query() query: GetMessagesDto,
-  ) {
+  getMessages(@Param('chatId') chatId: string, @Query() query: GetMessagesDto) {
     return this.service.getMessages(chatId, query);
   }
 }

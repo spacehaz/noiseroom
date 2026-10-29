@@ -50,16 +50,18 @@ export default function ProfileScreen() {
         <Actions>
           {confirmLeave ? (
             <>
-              <Text error size="sm">this will remove you from all chats and wipe all local vocabularies. are you sure?</Text>
-              <Button
-                title="confirm leave all"
-                onClick={() => leaveAll()}
-                loading={isLeaving}
-              />
+              <Text error size="sm">
+                this will remove you from all chats and wipe all local vocabularies. are you sure?
+              </Text>
+              <Button title="confirm leave all" onClick={() => leaveAll()} loading={isLeaving} />
               <Button title="cancel" onClick={() => setConfirmLeave(false)} variant="secondary" />
             </>
           ) : (
-            <Button title="leave all chats" onClick={() => setConfirmLeave(true)} variant="secondary" />
+            <Button
+              title="leave all chats"
+              onClick={() => setConfirmLeave(true)}
+              variant="secondary"
+            />
           )}
           <Button title="logout" onClick={handleLogout} />
         </Actions>

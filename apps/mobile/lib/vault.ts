@@ -60,16 +60,27 @@ async function getStoredChatIds(username: string): Promise<string[]> {
 async function addStoredChatId(username: string, chatId: string): Promise<void> {
   const ids = await getStoredChatIds(username);
   if (!ids.includes(chatId)) {
-    await SecureStore.setItemAsync(`vocabulary_chat_ids_${username}`, JSON.stringify([...ids, chatId]));
+    await SecureStore.setItemAsync(
+      `vocabulary_chat_ids_${username}`,
+      JSON.stringify([...ids, chatId]),
+    );
   }
 }
 
-export async function saveVocabularyLocally(username: string, chatId: string, vocabulary: Vocabulary, pin: string): Promise<void> {
+export async function saveVocabularyLocally(
+  username: string,
+  chatId: string,
+  vocabulary: Vocabulary,
+  pin: string,
+): Promise<void> {
   await SecureStore.setItemAsync(vocabKey(username, chatId), encryptVocabulary(vocabulary, pin));
   await addStoredChatId(username, chatId);
 }
 
-export async function loadAllVocabularies(username: string, pin: string): Promise<Record<string, Vocabulary>> {
+export async function loadAllVocabularies(
+  username: string,
+  pin: string,
+): Promise<Record<string, Vocabulary>> {
   const ids = await getStoredChatIds(username);
   const result: Record<string, Vocabulary> = {};
   for (const chatId of ids) {

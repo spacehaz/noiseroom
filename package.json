@@ -10,10 +10,15 @@
   "scripts": {
     "backend": "yarn workspace backend start:dev",
     "backend:build": "yarn workspace backend build",
-    "mobile": "yarn workspace mobile start"
+    "mobile": "yarn workspace mobile start",
+    "format": "prettier --write \"**/*.{ts,tsx}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx}\""
   },
   "engines": {
     "node": ">=20.0.0",
     "yarn": ">=1.22.0"
+  },
+  "devDependencies": {
+    "prettier": "3.6.2"
   }
 }

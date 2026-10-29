@@ -13,7 +13,12 @@ import { styles } from './_styles';
 import { DraggableItemProps, ManualSubstitutionEditorProps } from './_types';
 
 const DraggableItem = React.memo(function DraggableItem({
-  itemIndex, char, cols, totalItems, sharedOrder, activeItemIdx,
+  itemIndex,
+  char,
+  cols,
+  totalItems,
+  sharedOrder,
+  activeItemIdx,
 }: DraggableItemProps) {
   const posX = useSharedValue((itemIndex % cols) * STEP);
   const posY = useSharedValue(Math.floor(itemIndex / cols) * STEP);
@@ -22,7 +27,7 @@ const DraggableItem = React.memo(function DraggableItem({
   const totalRows = Math.ceil(totalItems / cols);
 
   useAnimatedReaction(
-    () => activeItemIdx.value === itemIndex ? -1 : sharedOrder.value.indexOf(itemIndex),
+    () => (activeItemIdx.value === itemIndex ? -1 : sharedOrder.value.indexOf(itemIndex)),
     (pos) => {
       if (pos === -1) return;
       posX.value = withSpring((pos % cols) * STEP, SPRING);
@@ -85,7 +90,11 @@ const DraggableItem = React.memo(function DraggableItem({
   );
 });
 
-export function ManualSubstitutionEditor({ alphabet, onComplete, onCancel }: ManualSubstitutionEditorProps) {
+export function ManualSubstitutionEditor({
+  alphabet,
+  onComplete,
+  onCancel,
+}: ManualSubstitutionEditorProps) {
   const chars = useMemo(() => buildCharSet(alphabet), [alphabet]);
   const N = chars.length;
 
@@ -108,7 +117,9 @@ export function ManualSubstitutionEditor({ alphabet, onComplete, onCancel }: Man
 
   return (
     <View style={styles.container}>
-      <RNText style={styles.hint}>drag pink tiles to remap{'\n'}green = source · pink = cipher</RNText>
+      <RNText style={styles.hint}>
+        drag pink tiles to remap{'\n'}green = source · pink = cipher
+      </RNText>
       <View style={[styles.grid, { width: gridWidth, height: gridHeight }]}>
         {chars.map((char, i) => (
           <View

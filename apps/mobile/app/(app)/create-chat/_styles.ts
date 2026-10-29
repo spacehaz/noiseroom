@@ -46,13 +46,13 @@ export const OptionButton = styled.TouchableOpacity<{ selected?: boolean }>`
   padding-vertical: ${({ theme }) => theme.spacing.sm}px;
   padding-horizontal: ${({ theme }) => theme.spacing.md}px;
   border-width: 1px;
-  border-color: ${({ theme, selected }) => selected ? theme.colors.accent : theme.colors.border};
+  border-color: ${({ theme, selected }) => (selected ? theme.colors.accent : theme.colors.border)};
 `;
 
 export const OptionLabel = styled.Text<{ selected?: boolean }>`
   font-family: ${({ theme }) => theme.font.mono};
   font-size: ${({ theme }) => theme.fontSize.md}px;
-  color: ${({ theme, selected }) => selected ? theme.colors.accent : theme.colors.text};
+  color: ${({ theme, selected }) => (selected ? theme.colors.accent : theme.colors.text)};
 `;
 
 export const ReviewRow = styled.View`

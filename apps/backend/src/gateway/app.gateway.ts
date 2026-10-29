@@ -50,10 +50,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   // Subscribe the client to a chat room so they receive new_message events.
   // Rejects if the user is not a member of the chat.
   @SubscribeMessage('join_chat')
-  async handleJoinChat(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() data: { chatId: string },
-  ) {
+  async handleJoinChat(@ConnectedSocket() client: Socket, @MessageBody() data: { chatId: string }) {
     const member = await this.chatsRepository.isMember(data.chatId, client.data.userId);
     if (!member) throw new WsException('Not a member of this chat');
 

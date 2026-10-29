@@ -29,10 +29,16 @@ export default function SetPinScreen() {
   }
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={{ flex: 1 }}
+    >
       <Container>
         <Title>// set pin</Title>
-        <Text muted size="sm">your pin encrypts your vocabulary backup. it is never stored — you will need to enter it each session.</Text>
+        <Text muted size="sm">
+          your pin encrypts your vocabulary backup. it is never stored — you will need to enter it
+          each session.
+        </Text>
         <Fields>
           <Input
             label="pin"
@@ -51,7 +57,11 @@ export default function SetPinScreen() {
             returnKeyType="done"
             onSubmitEditing={handleConfirm}
           />
-          {error ? <Text error size="sm">{error}</Text> : null}
+          {error ? (
+            <Text error size="sm">
+              {error}
+            </Text>
+          ) : null}
         </Fields>
         <Actions>
           <Button title="confirm" onClick={handleConfirm} />

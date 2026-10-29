@@ -13,7 +13,9 @@ export function AlphabetStep({ value, onNext }: Props) {
   return (
     <StepContent>
       <Title size="lg">// alphabet</Title>
-      <Text muted size="sm">choose the base alphabet for your cipher</Text>
+      <Text muted size="sm">
+        choose the base alphabet for your cipher
+      </Text>
       <Options>
         {OPTIONS.map((a) => (
           <OptionButton key={a} selected={value === a} onPress={() => onNext(a)}>

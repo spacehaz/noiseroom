@@ -15,7 +15,9 @@ export function HomophonesStep({ value, onNext }: Props) {
   return (
     <StepContent>
       <Title size="lg">// homophones</Title>
-      <Text muted size="sm">popular letters get multiple substitution options</Text>
+      <Text muted size="sm">
+        popular letters get multiple substitution options
+      </Text>
       <Options>
         {OPTIONS.map(([v, label]) => (
           <OptionButton key={label} selected={value === v} onPress={() => onNext(v)}>

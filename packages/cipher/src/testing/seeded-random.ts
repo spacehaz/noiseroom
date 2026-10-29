@@ -1,4 +1,4 @@
-import { createCryptoRandom } from "../random";
+import { createCryptoRandom } from '../random';
 
 export function mulberry32(seed: number): () => number {
   let state = seed >>> 0;

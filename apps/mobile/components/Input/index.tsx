@@ -8,11 +8,7 @@ export function Input({ onChange, label, error, ...rest }: InputProps) {
   return (
     <Wrapper>
       {label && <Label>{label}</Label>}
-      <StyledInput
-        onChangeText={onChange}
-        placeholderTextColor={theme.colors.muted}
-        {...rest}
-      />
+      <StyledInput onChangeText={onChange} placeholderTextColor={theme.colors.muted} {...rest} />
       {error && <ErrorText>{error}</ErrorText>}
     </Wrapper>
   );

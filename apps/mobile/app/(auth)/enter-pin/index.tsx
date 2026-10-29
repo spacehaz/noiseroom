@@ -64,10 +64,15 @@ export default function EnterPinScreen() {
   }
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={{ flex: 1 }}
+    >
       <Container>
         <Title>{'// enter pin'}</Title>
-        <Text muted size="sm">enter your pin to unlock vocabulary access for this session.</Text>
+        <Text muted size="sm">
+          enter your pin to unlock vocabulary access for this session.
+        </Text>
         <Fields>
           <Input
             label="pin"
@@ -78,7 +83,11 @@ export default function EnterPinScreen() {
             returnKeyType="done"
             onSubmitEditing={handleConfirm}
           />
-          {error ? <Text error size="sm">{error}</Text> : null}
+          {error ? (
+            <Text error size="sm">
+              {error}
+            </Text>
+          ) : null}
         </Fields>
         <Actions>
           <Button title="unlock" onClick={handleConfirm} loading={loading} />

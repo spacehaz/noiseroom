@@ -48,11 +48,17 @@ export default function SearchScreen() {
       </Header>
 
       {debouncedQuery.length === 0 ? (
-        <Empty><Text muted>type to search users</Text></Empty>
+        <Empty>
+          <Text muted>type to search users</Text>
+        </Empty>
       ) : isFetching ? (
-        <Empty><Text muted>searching...</Text></Empty>
+        <Empty>
+          <Text muted>searching...</Text>
+        </Empty>
       ) : users.length === 0 ? (
-        <Empty><Text muted>no users found</Text></Empty>
+        <Empty>
+          <Text muted>no users found</Text>
+        </Empty>
       ) : (
         <FlatList
           data={users}

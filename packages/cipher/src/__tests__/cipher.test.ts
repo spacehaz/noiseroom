@@ -21,7 +21,7 @@ const fixedVocab: Vocabulary = {
 
 describe('encrypt', () => {
   it('produces output of different content than input', () => {
-    const rng = seeded()
+    const rng = seeded();
     const cipher = encrypt('hello', fixedVocab, rng);
     expect(cipher).not.toBe('hello');
   });
@@ -29,7 +29,7 @@ describe('encrypt', () => {
   it('substitutes every known character', () => {
     // with no null symbols, every char should be substituted
     const noNullVocab: Vocabulary = { ...fixedVocab, nullSymbols: [] };
-    const rng = seeded()
+    const rng = seeded();
 
     const cipher = encrypt('hello', noNullVocab, rng);
     // 'hello' → h→d, e→one of [l,%,Ω], l→x, l→x, o→r
@@ -45,7 +45,7 @@ describe('encrypt', () => {
   it('passes through characters not in the charMap', () => {
     const noNullVocab: Vocabulary = { ...fixedVocab, nullSymbols: [] };
     // '!' is not in charMap — should pass through unchanged
-    const rng = seeded()
+    const rng = seeded();
 
     const cipher = encrypt('!', noNullVocab, rng);
     expect(cipher).toBe('!');
@@ -54,7 +54,7 @@ describe('encrypt', () => {
   it('inserts null symbols into the output', () => {
     // run many times to reduce flakiness (30% chance per char)
     const nullSymbols = fixedVocab.nullSymbols;
-    const rng = seeded()
+    const rng = seeded();
 
     let foundNull = false;
     for (let i = 0; i < 50; i++) {
@@ -68,7 +68,7 @@ describe('encrypt', () => {
   });
 
   it('produces different output on repeated calls (randomness)', () => {
-        const rng = seeded()
+    const rng = seeded();
 
     const results = new Set(Array.from({ length: 20 }, () => encrypt('hello', fixedVocab, rng)));
     // with homophones and nulls, not all 20 results should be identical
@@ -108,7 +108,7 @@ describe('decrypt', () => {
 describe('encrypt → decrypt round trip', () => {
   it('recovers original text with fixed vocabulary', () => {
     const original = 'hello world';
-        const rng = seeded()
+    const rng = seeded();
 
     const cipher = encrypt(original, fixedVocab, rng);
     const recovered = decryptFn(cipher, fixedVocab);
@@ -116,7 +116,7 @@ describe('encrypt → decrypt round trip', () => {
   });
 
   it('recovers original text with randomly generated vocabulary', () => {
-        const rng = seeded()
+    const rng = seeded();
 
     const vocab = generateVocabulary('latin', rng);
     const original = 'hello world';
@@ -126,7 +126,7 @@ describe('encrypt → decrypt round trip', () => {
   });
 
   it('recovers original text in shuffle mode', () => {
-        const rng = seeded()
+    const rng = seeded();
 
     const vocab = generateVocabulary('latin', rng, 'shuffle');
     const original = 'hello world';
@@ -136,7 +136,7 @@ describe('encrypt → decrypt round trip', () => {
   });
 
   it('recovers cyrillic text', () => {
-        const rng = seeded()
+    const rng = seeded();
 
     const vocab = generateVocabulary('cyrillic', rng);
     const original = 'привет мир';
@@ -146,7 +146,7 @@ describe('encrypt → decrypt round trip', () => {
   });
 
   it('recovers empty string', () => {
-        const rng = seeded()
+    const rng = seeded();
 
     const cipher = encrypt('', fixedVocab, rng);
     expect(decryptFn(cipher, fixedVocab)).toBe('');

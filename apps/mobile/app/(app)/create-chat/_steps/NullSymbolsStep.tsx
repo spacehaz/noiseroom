@@ -15,7 +15,9 @@ export function NullSymbolsStep({ value, onNext }: Props) {
   return (
     <StepContent>
       <Title size="lg">// null symbols</Title>
-      <Text muted size="sm">random decoy characters inserted into ciphertext</Text>
+      <Text muted size="sm">
+        random decoy characters inserted into ciphertext
+      </Text>
       <Options>
         {OPTIONS.map(([v, label]) => (
           <OptionButton key={label} selected={value === v} onPress={() => onNext(v)}>

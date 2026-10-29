@@ -19,7 +19,7 @@ import {
   InputRow,
   MessageInput,
   Empty,
-  MessageList
+  MessageList,
 } from './_styles';
 
 interface Message {
@@ -39,7 +39,11 @@ export default function ChatScreen() {
   const [text, setText] = useState('');
   const flatListRef = useRef<FlatList>(null);
 
-  const { data: initialMessages = [], isLoading, error } = useQuery({
+  const {
+    data: initialMessages = [],
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['messages', chatId],
     queryFn: () => api.fetch<Message[]>(`/chats/${chatId}/messages?order=asc&limit=50`),
   });
@@ -81,18 +85,35 @@ export default function ChatScreen() {
         <Header>
           <Button title="←" onClick={() => router.back()} variant="secondary" size="sm" />
           <HeaderTitle>{`> chat`}</HeaderTitle>
-          {vocabulary
-            ? <Button title="share" onClick={() => router.push(`/(app)/chat/${chatId}/share-vocab`)} variant="secondary" size="sm" />
-            : <Button title="scan" onClick={() => router.push('/(app)/join-chat')} variant="secondary" size="sm" />
-          }
+          {vocabulary ? (
+            <Button
+              title="share"
+              onClick={() => router.push(`/(app)/chat/${chatId}/share-vocab`)}
+              variant="secondary"
+              size="sm"
+            />
+          ) : (
+            <Button
+              title="scan"
+              onClick={() => router.push('/(app)/join-chat')}
+              variant="secondary"
+              size="sm"
+            />
+          )}
         </Header>
 
         {isLoading ? (
-          <Empty><Text muted>loading...</Text></Empty>
+          <Empty>
+            <Text muted>loading...</Text>
+          </Empty>
         ) : error ? (
-          <Empty><Text error>{error instanceof Error ? error.message : 'failed to load'}</Text></Empty>
+          <Empty>
+            <Text error>{error instanceof Error ? error.message : 'failed to load'}</Text>
+          </Empty>
         ) : allMessages.length === 0 ? (
-          <Empty><Text muted>no messages yet</Text></Empty>
+          <Empty>
+            <Text muted>no messages yet</Text>
+          </Empty>
         ) : (
           <MessageList>
             <FlatList

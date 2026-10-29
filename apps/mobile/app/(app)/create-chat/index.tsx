@@ -2,7 +2,15 @@ import { useState } from 'react';
 import { KeyboardAvoidingView, Platform } from 'react-native';
 import { router } from 'expo-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { AlphabetType, Vocabulary, randomSubstitutionLayer, manualSubstitutionLayer, randomHomophoneLayer, randomSpaceLayer, randomNullLayer } from '@noiseroom/cipher';
+import {
+  AlphabetType,
+  Vocabulary,
+  randomSubstitutionLayer,
+  manualSubstitutionLayer,
+  randomHomophoneLayer,
+  randomSpaceLayer,
+  randomNullLayer,
+} from '@noiseroom/cipher';
 import { api } from '@/lib/api';
 import { encryptVocabulary, saveVocabularyLocally } from '@/lib/vault';
 import { socketClient } from '@/lib/socket';
@@ -46,7 +54,7 @@ function buildVocabulary(config: WizardConfig): Vocabulary {
     charMap = randomHomophoneLayer(charMap, alphabet, rng);
   }
   if (config.space) {
-    charMap = randomSpaceLayer(charMap, alphabet,rng);
+    charMap = randomSpaceLayer(charMap, alphabet, rng);
   }
   if (config.nullSymbols) {
     nullSymbols = randomNullLayer(charMap, alphabet, rng);
@@ -99,7 +107,11 @@ export default function CreateChatScreen() {
 
   const steps = [
     <NameStep key="name" value={config.name} onNext={(name) => update('name', name)} />,
-    <AlphabetStep key="alphabet" value={config.alphabet} onNext={(alphabet: AlphabetType) => update('alphabet', alphabet)} />,
+    <AlphabetStep
+      key="alphabet"
+      value={config.alphabet}
+      onNext={(alphabet: AlphabetType) => update('alphabet', alphabet)}
+    />,
     <SubstitutionStep
       key="substitution"
       value={config.substitution}
@@ -109,9 +121,17 @@ export default function CreateChatScreen() {
         next();
       }}
     />,
-    <HomophonesStep key="homophones" value={config.homophones} onNext={(homophones) => update('homophones', homophones)} />,
+    <HomophonesStep
+      key="homophones"
+      value={config.homophones}
+      onNext={(homophones) => update('homophones', homophones)}
+    />,
     <SpaceStep key="space" value={config.space} onNext={(space) => update('space', space)} />,
-    <NullSymbolsStep key="nullSymbols" value={config.nullSymbols} onNext={(nullSymbols) => update('nullSymbols', nullSymbols)} />,
+    <NullSymbolsStep
+      key="nullSymbols"
+      value={config.nullSymbols}
+      onNext={(nullSymbols) => update('nullSymbols', nullSymbols)}
+    />,
     <ReviewStep
       key="review"
       config={config}
@@ -123,7 +143,10 @@ export default function CreateChatScreen() {
   ];
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={{ flex: 1 }}
+    >
       <Container>
         <Header>
           <StepIndicator>
@@ -135,9 +158,7 @@ export default function CreateChatScreen() {
           </StepIndicator>
           <Button title="×" onClick={() => router.back()} variant="secondary" size="sm" />
         </Header>
-        <Body>
-          {steps[step]}
-        </Body>
+        <Body>{steps[step]}</Body>
       </Container>
     </KeyboardAvoidingView>
   );

@@ -9,7 +9,6 @@ function pickRandom<T>(arr: T[], rng: RandomSource): T {
 function insertNulls(text: string, nullSymbols: string[], rng: RandomSource): string {
   if (nullSymbols.length === 0) return text;
 
-  const chars = text.split('');
   const result: string[] = [];
 
   for (const char of Array.from(text)) {

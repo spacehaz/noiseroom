@@ -11,7 +11,7 @@ function insertNulls(text: string, nullSymbols: string[], rng: RandomSource): st
   const chars = text.split('');
   const result: string[] = [];
 
-  for (const char of chars) {
+  for (const char of Array.from(text)) {
     result.push(char);
     // ~30% chance to insert a null symbol after each character
     if (rng.int(10) < 3) {
@@ -23,8 +23,8 @@ function insertNulls(text: string, nullSymbols: string[], rng: RandomSource): st
 }
 
 export function encrypt(plaintext: string, vocab: Vocabulary, rng: RandomSource): string {
-  const substituted = plaintext
-    .split('')
+  // all text is lowercased before encryption, so case never reaches the ciphertext
+  const substituted =  Array.from(plaintext.toLowerCase())
     .map((char) => {
       const options = vocab.charMap[char];
       // characters not in the map are passed through as-is

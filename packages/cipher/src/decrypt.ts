@@ -1,4 +1,5 @@
 import { Vocabulary } from './types';
+import { validateVocabulary } from './validation';
 
 function buildReverseMap(vocab: Vocabulary): Record<string, string> {
   const reverse: Record<string, string> = {};
@@ -13,6 +14,7 @@ function buildReverseMap(vocab: Vocabulary): Record<string, string> {
 }
 
 export function decrypt(ciphertext: string, vocab: Vocabulary): string {
+  validateVocabulary(vocab);
   const nullSet = new Set(vocab.nullSymbols);
   const reverseMap = buildReverseMap(vocab);
 

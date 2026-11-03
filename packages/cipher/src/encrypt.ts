@@ -1,5 +1,6 @@
 import { Vocabulary } from './types';
 import { RandomSource } from './random';
+import { validateVocabulary } from './validation';
 
 function pickRandom<T>(arr: T[], rng: RandomSource): T {
   return arr[rng.int(arr.length)];
@@ -23,6 +24,7 @@ function insertNulls(text: string, nullSymbols: string[], rng: RandomSource): st
 }
 
 export function encrypt(plaintext: string, vocab: Vocabulary, rng: RandomSource): string {
+  validateVocabulary(vocab);
   // all text is lowercased before encryption, so case never reaches the ciphertext
   const substituted =  Array.from(plaintext.toLowerCase())
     .map((char) => {

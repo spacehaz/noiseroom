@@ -14,3 +14,4 @@ export {
   manualNullLayer,
 } from './vocabulary';
 export type { Vocabulary, AlphabetType } from './types';
+export { validateVocabulary, VocabularyError } from './validation';

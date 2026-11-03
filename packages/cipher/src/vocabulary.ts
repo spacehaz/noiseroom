@@ -1,5 +1,6 @@
 import { RandomSource } from './random';
 import { AlphabetType, Vocabulary } from './types';
+import { assertSingleSymbol, validateVocabulary } from './validation';
 
 const LATIN_CHARS = 'abcdefghijklmnopqrstuvwxyz'.split('');
 const CYRILLIC_CHARS = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя'.split('');
@@ -76,6 +77,8 @@ export function randomSubstitutionLayer(
 export function manualSubstitutionLayer(map: Record<string, string>): Record<string, string[]> {
   const charMap: Record<string, string[]> = {};
   for (const [char, sub] of Object.entries(map)) {
+    assertSingleSymbol(char, `plaintext key "${char}"`);
+    assertSingleSymbol(sub, `substitute for "${char}"`);
     charMap[char] = [sub];
   }
   return charMap;
@@ -110,6 +113,8 @@ export function manualHomophoneLayer(
 ): Record<string, string[]> {
   const result = { ...charMap };
   for (const [char, extra] of Object.entries(extras)) {
+    assertSingleSymbol(char, `plaintext key "${char}"`);
+    for (const sub of extra) assertSingleSymbol(sub, `homophone for "${char}"`);
     result[char] = result[char] ? [...result[char]!, ...extra] : extra;
   }
   return result;
@@ -131,6 +136,7 @@ export function manualSpaceLayer(
   charMap: Record<string, string[]>,
   options: string[],
 ): Record<string, string[]> {
+  for (const sub of options) assertSingleSymbol(sub, 'space substitute');
   return { ...charMap, ' ': options };
 }
 
@@ -147,6 +153,7 @@ export function randomNullLayer(
 
 // Layer 4 manual: you provide the null symbols
 export function manualNullLayer(symbols: string[]): string[] {
+  for (const sym of symbols) assertSingleSymbol(sym, 'null symbol');
   return symbols;
 }
 
@@ -161,5 +168,7 @@ export function generateVocabulary(
   charMap = randomSpaceLayer(charMap, alphabet, rng);
   const nullSymbols = randomNullLayer(charMap, alphabet, rng);
 
-  return { alphabet, charMap, nullSymbols };
+  const vocab: Vocabulary = { alphabet, charMap, nullSymbols };
+  validateVocabulary(vocab);
+  return vocab;
 }

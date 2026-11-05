@@ -1,12 +1,12 @@
 import { Vocabulary } from './types';
 import { validateVocabulary } from './validation';
 
-function buildReverseMap(vocab: Vocabulary): Record<string, string> {
-  const reverse: Record<string, string> = {};
+function buildReverseMap(vocab: Vocabulary): Map<string, string> {
+  const reverse = new Map<string, string>();
 
   for (const [original, substitutions] of Object.entries(vocab.charMap)) {
     for (const sub of substitutions) {
-      reverse[sub] = original;
+      reverse.set(sub, original);
     }
   }
 
@@ -18,9 +18,8 @@ export function decrypt(ciphertext: string, vocab: Vocabulary): string {
   const nullSet = new Set(vocab.nullSymbols);
   const reverseMap = buildReverseMap(vocab);
 
-  return ciphertext
-    .split('')
+  return Array.from(ciphertext)
     .filter((char) => !nullSet.has(char))
-    .map((char) => reverseMap[char] ?? char)
+    .map((char) => reverseMap.get(char) ?? char)
     .join('');
 }

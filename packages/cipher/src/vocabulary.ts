@@ -30,12 +30,21 @@ function derange(chars: string[], rng: RandomSource): string[] {
   return result;
 }
 
+const ASCII_PRINTABLE = /^[\x21-\x7e]$/;
+
 function availablePool(alphabet: AlphabetType, exclude: Set<string>, rng: RandomSource): string[] {
   const base = alphabet === 'latin' ? CYRILLIC_CHARS : LATIN_CHARS;
-  return shuffle(
-    [...base, ...DIGITS, ...SPECIAL].filter((c) => !exclude.has(c)),
-    rng,
-  );
+  const candidates = [...base, ...DIGITS, ...SPECIAL].filter((c) => !exclude.has(c));
+  return [
+    ...shuffle(candidates.filter((c) => !ASCII_PRINTABLE.test(c)), rng),
+    ...shuffle(candidates.filter((c) => ASCII_PRINTABLE.test(c)), rng),
+  ];
+}
+
+function cloneCharMap(charMap: Record<string, string[]>): Record<string, string[]> {
+  const copy: Record<string, string[]> = {};
+  for (const [char, subs] of Object.entries(charMap)) copy[char] = [...subs];
+  return copy;
 }
 
 function usedSymbols(alphabet: AlphabetType, charMap: Record<string, string[]>): Set<string> {
@@ -92,7 +101,7 @@ export function randomHomophoneLayer(
 ): Record<string, string[]> {
   const popular = alphabet === 'latin' ? LATIN_POPULAR : CYRILLIC_POPULAR;
   const pool = availablePool(alphabet, usedSymbols(alphabet, charMap), rng);
-  const result = { ...charMap };
+  const result = cloneCharMap(charMap);
   let poolIndex = 0;
 
   for (const char of popular) {
@@ -137,7 +146,7 @@ export function manualSpaceLayer(
   options: string[],
 ): Record<string, string[]> {
   for (const sub of options) assertSingleSymbol(sub, 'space substitute');
-  return { ...charMap, ' ': options };
+  return { ...charMap, ' ': [...options] };
 }
 
 // Layer 4: picks 3-5 random decoy symbols not used anywhere else
@@ -154,7 +163,7 @@ export function randomNullLayer(
 // Layer 4 manual: you provide the null symbols
 export function manualNullLayer(symbols: string[]): string[] {
   for (const sym of symbols) assertSingleSymbol(sym, 'null symbol');
-  return symbols;
+  return [...symbols];
 }
 
 // Generates a full vocabulary by calling all random layer generators
